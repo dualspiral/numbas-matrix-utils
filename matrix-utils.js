@@ -23,8 +23,9 @@ Numbas.addExtension('matrix-utils',['jme'],function(extension) {
     let scope = extension.scope;
     let TList = Numbas.jme.types.TList;
     let TMatrix = Numbas.jme.types.TMatrix;
+    let TNum = Numbas.jme.types.TNum;
     let funcObj = Numbas.jme.funcObj;
-  
+
     let fill_diag = function(matrix, values, offsets) {
       if (values.length !== offsets.length) {
         throw new Numbas.Error("Values and offsets must be the same size");
@@ -44,7 +45,7 @@ Numbas.addExtension('matrix-utils',['jme'],function(extension) {
         } else if (offset > 0) {
           r = offset
         }
-        let v = values[0];
+        let v = values[idx];
   
         while (r < rows && c < cols) {
           matrix[r][c] = v;
@@ -54,8 +55,30 @@ Numbas.addExtension('matrix-utils',['jme'],function(extension) {
       }
   
       return new TMatrix(matrix);
-    }
+    };
+
+    let create_diag = function(rows, cols, values, offsets) {
+        if (rows <= 0 || cols <= 0 || !Number.isInteger(rows) || !Number.isInteger(cols)) {
+            throw new Numbas.Error("There must be a postive integer for both rows and cols");
+        }
+
+        let main_array = new Array(rows);
+        for (let idx = 0; idx < rows; ++idx) {
+            let inner_array = new Array(cols);
+            for (let j = 0; j < rows; ++j) {
+                inner_array[j] = 0;
+            }
+            main_array[idx] = inner_array;
+        }
+
+        // This is somewhat hacky, and relies on NUMBAS internal behaviour by the looks of it...
+        main_array.rows = rows;
+        main_array.columns = cols;
+
+        return fill_diag(main_array, values, offsets);
+    };
     
     
+    scope.addFunction(new funcObj('create_diag', [TNum,TNum,TList,TList], TMatrix, create_diag, {unwrapValues:true}));
     scope.addFunction(new funcObj('fill_diag', [TMatrix,TList,TList], TMatrix, fill_diag, {unwrapValues:true}));
   });

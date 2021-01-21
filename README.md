@@ -2,6 +2,9 @@
 
 This is mostly me messing about with the extension system, but it also serves a purpose as I'm unable to find the functions I write here.
 
+### `create_diag`
+
+Creates a zero `row` by `cols` matrix, the calls `fill_diag` using the `values` and `offset` parameters.
 ### `fill_diag`
 
 Takes a matrix and fills the diagonals as defined. The parameters are:
