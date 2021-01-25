@@ -99,7 +99,7 @@ Numbas.addExtension('matrix-utils',['jme'],function(extension) {
         return idx % 2 === 1 ? -1 : 1;
     }
 
-    // A recursive method to 
+    // A recursive method to get the determinant of a square matrix
     let determinant = function(matrix) {
         if (matrix.length !== matrix[0].length) {
             // nope
