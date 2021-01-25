@@ -77,8 +77,55 @@ Numbas.addExtension('matrix-utils',['jme'],function(extension) {
 
         return fill_diag(main_array, values, offsets);
     };
-    
+
+    let subsample_matrix = function(matrix, ignoredColIndex) {
+        let ret = [];
+        for (let i = 1; i < matrix.length; ++i) {
+            let row = [];
+            for (let j = 0; j < matrix[0].length; ++j) {
+              if (ignoredColIndex !== j) {
+                  row.push(matrix[i][j]);
+              }
+            }
+            ret.push(row);
+        }
+
+        ret.rows = matrix.rows - 1;
+        ret.columns = matrix.columns - 1;
+        return ret;
+    }
+
+    let sign_from_det_index = function(idx) {
+        return idx % 2 === 1 ? -1 : 1;
+    }
+
+    // A recursive method to 
+    let determinant = function(matrix) {
+        if (matrix.length !== matrix[0].length) {
+            // nope
+            throw new Numbas.Error("Matrix is not square");
+        }
+
+        if (matrix.length === 1) {
+            return matrix[1][1];
+        }
+
+        if (matrix.length === 2) {
+            // do the determinant
+            return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
+        }
+
+        // Otherwise, what we need to do is go through the top row and build up matrixes based on that.
+        let top_row = matrix[0];
+        let result = 0;
+        for (let i = 0; i < matrix.length; ++i) {
+            result += top_row[i] * sign_from_det_index(i) * determinant(subsample_matrix(matrix, i));
+        }
+        return result;
+    }
+
     
     scope.addFunction(new funcObj('create_diag', [TNum,TNum,TList,TList], TMatrix, create_diag, {unwrapValues:true}));
     scope.addFunction(new funcObj('fill_diag', [TMatrix,TList,TList], TMatrix, fill_diag, {unwrapValues:true}));
+    scope.addFunction(new funcObj('determinant', [TMatrix], TNum, matrix => new TNum(determinant(matrix)), {unwrapValues:true}));
   });

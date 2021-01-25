@@ -23,3 +23,6 @@ fill_diag(matrix, [1, -2, 1], [-1, 0 ,1]);
 
 ![5x5 tridiag matrix](matrix-eg.jpg)
 
+### `determinant`
+
+Takes a matrix and returns it's determinant. Does not have a restriction on the size, as long as the matrix is a square.
